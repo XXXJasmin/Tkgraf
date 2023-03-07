@@ -1,33 +1,22 @@
 import tkinter as tk
 import pylab as pl
-from pylab import pi
+from tkinter import messagebox
+from tkinter import filedialog
 
 class MyEntry(tk.Entry):
     def __init__(self, master=None, cnf={}, **kw):
         super().__init__(master, cnf, **kw)
 
-        if "textvariable" not in kw:
-            self.variable = tk.StringVar()
-            self.config(textvariable=self.variable)
-        else:
-            self.variable = kw["textvariable"]
+        
 
 class Application(tk.Tk):
     name = "Vyber soubor"
     
     def __init__(self):
         super().__init__(className=self.name)
-        self.title(self.name)
-
         self.bind("<Escape>", self.quit)
-
-
-
-    def __init__(self):
-        super().__init__(className=self.name)
-        self.bind("<Escape>", self.quit)
-        self.entry = MyEntry(self)
-        self.entry.pack(side="top", fill="x")
+        self.label = tk.Label(self, text = "---")
+        self.label.pack()
 
 
         self.frame1=tk.Frame(self)
@@ -45,15 +34,30 @@ class Application(tk.Tk):
         self.button3=tk.Button(self.frame1, text="zavřít")
         self.button3.pack(side="bottom", ipadx=20, ipady=5)
         self.button3.bind("<ButtonRelease-1>", self.quit)
+        
+    def file(self, event= None):
+        self.filename = filedialog.askopenfilename()
+        self.label.config(text=self.filename)
 
-    def onclick(self, event:tk.Event):
-        print(self.frame1.get("anchor"))
-        print(self.frame1.get("active"))
-        print(self.frame1.curselection())
+    def show(self, event=None):
+        x = []
+        y = []
 
-    def file(self):
-        if self.button1 == self.onclick:
+        with open(self.filename,"r") as s:
+            while True:
+                radek = s.readline()
+                if radek == "":
+                    break
+                linesplit = radek.split()
+                if len(linesplit) == 2:
+                    a,b = radek.split()
+                    x.append(float(a))
+                    y.append(float(b))
+            pl.plot(x,y)
+            pl.grid(1)
+            pl.show()
+    def quit(self, event=None):
+        super().quit()
 
-    def show(self):
-
-    def quit(self):
+app = Application()
+app.mainloop()
